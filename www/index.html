@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        const myWorker = new Worker("minapp/service.js");
+        window.myWorker = myWorker;
+        myWorker.addEventListener('message', function (e) {
+            if (e.data.type === 'view') {
+                __render(JSON.parse(e.data.data))
+            }
+        })
+        // 小程序的js文件,正常应该是直接执行到service中的，不需要使用这种方式
+        myWorker.postMessage({
+            type: 'js',
+            pageName: 'page/index',
+            data: `Page({
+  data: {
+    cc1: '点击修改'
+  },
+
+  click: function () {
+    console.log('click')
+    this.setData({
+        cc1: 'asd'
+    })
+  },
+
+  click1: function () {
+      wx.showModal()
+  }
+})` });
+    </script>
+
+    <script src="minapp/view.js"></script>
+</body>
+
+</html>
